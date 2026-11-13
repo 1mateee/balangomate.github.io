@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Útvonalkereső vizualizáció – Balangó Máté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1F3F8;--surface:#FFFFFF;--ink:#0F1728;--mute:#566074;--line:#D8DDE8;--acc:#2B47F5;--acc-ink:#FFFFFF;--soft:#E4E9FB;--hi:#B3261E;--ok:#1B7A3E;--mud:#C8A56A;
+--head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"Public Sans","Segoe UI",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--ok:#7BDC9C;--mud:#8A6D3B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--ok:#7BDC9C;--mud:#8A6D3B;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body)}
+a{color:var(--acc)}
+.wrap{max-width:56rem;margin:0 auto;padding:0 1.25rem 3rem}
+h1,h2{font-family:var(--head);line-height:1.1;margin:0}
+h1{font-weight:800;font-size:clamp(2.2rem,7vw,3.6rem);letter-spacing:-.03em;margin:1rem 0}
+h2{font-weight:800;font-size:1.4rem;margin:2rem 0 .75rem}
+.lead,.note{color:var(--mute)}
+.lead{max-width:40rem}
+.back{padding-top:1.5rem;font-size:.95rem}
+.bar{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;margin:1.25rem 0 .75rem;align-items:center}
+.grp{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.grp>span{color:var(--mute);font-size:.9rem;margin-right:.2rem}
+button,select{font:600 .92rem var(--body);padding:.5rem .85rem;border-radius:.6rem;border:2px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer}
+select{background:var(--surface)}
+button:hover{background:var(--soft)}
+button[aria-pressed=true],button.go{background:var(--acc);color:var(--acc-ink)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+canvas{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:.8rem;touch-action:none;cursor:crosshair;background:var(--surface)}
+.stats{margin:.8rem 0;font-weight:500;min-height:1.6em}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-size:.9rem;color:var(--mute);margin:.5rem 0}
+.legend i{display:inline-block;width:.9rem;height:.9rem;border-radius:3px;margin-right:.35rem;vertical-align:-.1rem;border:1px solid var(--line)}
+.cmp{display:grid;gap:1rem;grid-template-columns:repeat(3,1fr)}
+.cmp div{background:var(--surface);border:1px solid var(--line);border-radius:.8rem;padding:1rem}
+.cmp h3{margin:0 0 .3rem;font:800 1.1rem var(--head)}
+.cmp p{margin:0;color:var(--mute);font-size:.95rem}
+@media (max-width:640px){.cmp{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<p class="back"><a href="https://claude.ai/artifact/Ew82vcfacFS3rooHoVq5XF">Vissza Balangó Máté oldalára</a></p>
+<h1>Útvonalkereső vizualizáció</h1>
+<p class="lead">Rajzolj falakat és mocsarat a rácsra, válassz algoritmust, és nézd meg, hogyan keresi meg a legjobb utat a kezdőpont (S) és a cél (C) között. Az S és a C húzással mozgatható.</p>
+
+<div class="bar" role="toolbar" aria-label="Beállítások">
+  <div class="grp" id="algos"><span>Algoritmus</span></div>
+  <div class="grp" id="tools"><span>Rajzolás</span></div>
+  <div class="grp"><span>Sebesség</span><select id="spd" aria-label="Sebesség"><option value="3">Lassú</option><option value="10" selected>Közepes</option><option value="40">Gyors</option><option value="9999">Azonnal</option></select></div>
+</div>
+<div class="bar">
+  <div class="grp" id="acts"></div>
+</div>
+<canvas id="cv" width="900" height="540" aria-label="Rács az útvonalkereséshez"></canvas>
+<p class="stats" id="stats" aria-live="polite">Nyomd meg az Indítás gombot.</p>
+<div class="legend">
+  <span><i style="background:var(--ok)"></i>Kezdőpont (S)</span>
+  <span><i style="background:var(--hi)"></i>Cél (C)</span>
+  <span><i style="background:var(--ink)"></i>Fal</span>
+  <span><i style="background:var(--mud)"></i>Mocsár (ötszörös költség)</span>
+  <span><i style="background:var(--soft)"></i>Bejárt mező</span>
+  <span><i style="background:var(--acc)"></i>Talált út</span>
+</div>
+
+<h2>Miben különböznek?</h2>
+<div class="cmp">
+  <div><h3>Szélességi keresés (BFS)</h3><p>A legkevesebb lépéses utat adja, de nem veszi figyelembe a mocsár költségét, ezért gyakran átmegy rajta.</p></div>
+  <div><h3>Dijkstra</h3><p>A legkisebb költségű utat találja meg, és kikerüli a mocsarat, ha megéri. Minden irányba egyformán terjed.</p></div>
+  <div><h3>A*</h3><p>Ugyanazt a legolcsóbb utat adja, de a cél felé tartó becslés miatt jóval kevesebb mezőt jár be.</p></div>
+</div>
+<p class="note">Az útvonalkeresés a szakdolgozatom témájához is kapcsolódik, ott valódi térképi adatokkal és időablakokkal dolgoztam.</p>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var R=18,C=30,S=30,N=R*C;
+var cv=$('cv'),ctx=cv.getContext('2d');
+var wall=new Array(N).fill(false),wt=new Array(N).fill(1);
+var start=8*C+4,end=8*C+25;
+var algo='astar',tool='wall',vis=[],path=[],vc=0,pc=0,anim=null,drag=null;
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var ALG=[['bfs','Szélességi (BFS)'],['dijkstra','Dijkstra'],['astar','A*']];
+var TOOLS=[['wall','Fal'],['mud','Mocsár'],['erase','Törlés']];
+
+function col(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function draw(){
+  var k=['--surface','--ink','--mud','--acc','--soft','--ok','--hi','--line'].map(col);
+  var cell=k[0],wc=k[1],mc=k[2],ac=k[3],sc=k[4],okc=k[5],hic=k[6],lc=k[7],i,r,c;
+  ctx.fillStyle=cell;ctx.fillRect(0,0,cv.width,cv.height);
+  for(i=0;i<N;i++){if(wall[i]||wt[i]>1){ctx.fillStyle=wall[i]?wc:mc;ctx.fillRect((i%C)*S,((i/C)|0)*S,S,S)}}
+  ctx.fillStyle=sc;
+  for(i=0;i<vc;i++){var v=vis[i];if(!wall[v]){ctx.globalAlpha=wt[v]>1?.7:1;ctx.fillStyle=sc;ctx.fillRect((v%C)*S+1,((v/C)|0)*S+1,S-2,S-2)}}
+  ctx.globalAlpha=1;ctx.fillStyle=ac;
+  for(i=0;i<pc;i++){var p=path[i];ctx.fillRect((p%C)*S+4,((p/C)|0)*S+4,S-8,S-8)}
+  ctx.strokeStyle=lc;ctx.lineWidth=1;ctx.beginPath();
+  for(c=0;c<=C;c++){ctx.moveTo(c*S+.5,0);ctx.lineTo(c*S+.5,cv.height)}
+  for(r=0;r<=R;r++){ctx.moveTo(0,r*S+.5);ctx.lineTo(cv.width,r*S+.5)}
+  ctx.stroke();
+  [[start,okc,'S'],[end,hic,'C']].forEach(function(x){ctx.fillStyle=x[1];ctx.fillRect((x[0]%C)*S+2,((x[0]/C)|0)*S+2,S-4,S-4);ctx.fillStyle='#fff';ctx.font='700 16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(x[2],(x[0]%C)*S+S/2,((x[0]/C)|0)*S+S/2+1)});
+}
+function clearRes(msg){if(anim){cancelAnimationFrame(anim);anim=null}vis=[];path=[];vc=0;pc=0;$('stats').textContent=msg||'Nyomd meg az Indítás gombot.'}
+
+function search(){
+  var s=start,e=end,g=new Array(N).fill(Infinity),prev=new Array(N).fill(-1),closed=new Array(N).fill(false),order=[],open=[s],i,k;
+  g[s]=0;
+  function h(i){return algo==='astar'?Math.abs(((i/C)|0)-((e/C)|0))+Math.abs(i%C-e%C):0}
+  function nb(i){var r=(i/C)|0,c=i%C,o=[];if(r>0)o.push(i-C);if(r<R-1)o.push(i+C);if(c>0)o.push(i-1);if(c<C-1)o.push(i+1);return o.filter(function(j){return !wall[j]})}
+  while(open.length){
+    if(algo==='bfs'){i=open.shift()}
+    else{var bi=0;for(k=1;k<open.length;k++){if(g[open[k]]+h(open[k])<g[open[bi]]+h(open[bi]))bi=k}i=open.splice(bi,1)[0]}
+    if(closed[i])continue;
+    closed[i]=true;order.push(i);
+    if(i===e)break;
+    nb(i).forEach(function(j){
+      if(closed[j])return;
+      var cost=g[i]+(algo==='bfs'?1:wt[j]);
+      if(algo==='bfs'){if(g[j]===Infinity){g[j]=cost;prev[j]=i;open.push(j)}}
+      else if(cost<g[j]){g[j]=cost;prev[j]=i;open.push(j)}
+    });
+  }
+  var pth=[],cost=0;
+  if(closed[e]){for(i=e;i!==-1;i=prev[i]){pth.unshift(i);if(i!==s)cost+=wt[i]}}
+  return {order:order,path:pth,found:closed[e],cost:cost};
+}
+
+function run(){
+  clearRes();
+  var r=search();vis=r.order;path=r.path;
+  $('stats').textContent=r.found?'Bejárt mezők: '+vis.length+' | Út hossza: '+(path.length-1)+' lépés | Út költsége: '+r.cost:'Nincs út a kezdőpont és a cél között. Bejárt mezők: '+vis.length;
+  var sp=reduce?99999:+$('spd').value;
+  (function tick(){
+    var done=false;
+    if(vc<vis.length)vc=Math.min(vis.length,vc+sp);
+    else if(pc<path.length)pc=Math.min(path.length,pc+Math.max(1,sp>>1));
+    else done=true;
+    draw();
+    anim=done?null:requestAnimationFrame(tick);
+  })();
+}
+
+function cellAt(e){var b=cv.getBoundingClientRect(),x=(e.clientX-b.left)*cv.width/b.width,y=(e.clientY-b.top)*cv.height/b.height,c=Math.floor(x/S),r=Math.floor(y/S);return(c<0||c>=C||r<0||r>=R)?-1:r*C+c}
+function paint(i){if(i===start||i===end)return;if(tool==='wall'){wall[i]=true;wt[i]=1}else if(tool==='mud'){wall[i]=false;wt[i]=5}else{wall[i]=false;wt[i]=1}}
+cv.addEventListener('pointerdown',function(e){var i=cellAt(e);if(i<0)return;cv.setPointerCapture(e.pointerId);clearRes();
+  if(i===start)drag='start';else if(i===end)drag='end';else{drag='paint';paint(i)}draw()});
+cv.addEventListener('pointermove',function(e){if(!drag)return;var i=cellAt(e);if(i<0)return;
+  if(drag==='start'){if(i!==end&&!wall[i])start=i}else if(drag==='end'){if(i!==start&&!wall[i])end=i}else paint(i);draw()});
+['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drag=null})});
+
+function group(id,list,get,set){
+  list.forEach(function(x){var b=document.createElement('button');b.type='button';b.textContent=x[1];b.setAttribute('aria-pressed',get()===x[0]);
+    b.addEventListener('click',function(){set(x[0]);Array.prototype.forEach.call($(id).querySelectorAll('button'),function(c,j){c.setAttribute('aria-pressed',list[j][0]===x[0])})});$(id).appendChild(b)});
+}
+group('algos',ALG,function(){return algo},function(v){algo=v;clearRes()});
+group('tools',TOOLS,function(){return tool},function(v){tool=v});
+function act(t,fn,cls){var b=document.createElement('button');b.type='button';b.textContent=t;if(cls)b.className=cls;b.addEventListener('click',fn);$('acts').appendChild(b)}
+act('Indítás',run,'go');
+act('Útvonal törlése',function(){clearRes();draw()});
+act('Véletlen akadályok',function(){clearRes();for(var i=0;i<N;i++){wall[i]=i!==start&&i!==end&&Math.random()<.27;wt[i]=1}draw()});
+act('Mindent töröl',function(){clearRes();wall.fill(false);wt.fill(1);draw()});
+draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Webbiztonsági labor – Balangó Máté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1F3F8;--surface:#FFFFFF;--ink:#0F1728;--mute:#566074;--line:#D8DDE8;--acc:#2B47F5;--acc-ink:#FFFFFF;--soft:#E4E9FB;--hi:#B3261E;--ok:#1B7A3E;
+--head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"Public Sans","Segoe UI",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--ok:#7BDC9C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--ok:#7BDC9C;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body)}
+a{color:var(--acc)}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.25rem 3rem}
+h1,h2,h3{font-family:var(--head);line-height:1.1;margin:0}
+h1{font-weight:800;font-size:clamp(2.2rem,7vw,3.6rem);letter-spacing:-.03em;margin:1rem 0}
+h2{font-weight:800;font-size:1.5rem;margin-bottom:.75rem}
+h3{font-size:1.1rem;margin:1.25rem 0 .4rem}
+.lead,.note{color:var(--mute)}
+.lead{max-width:38rem}
+.back{padding-top:1.5rem;font-size:.95rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0 1rem}
+button{font:600 .95rem var(--body);padding:.6rem 1rem;border-radius:.6rem;border:2px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer}
+button:hover{background:var(--soft)}
+button[aria-selected=true],button[aria-pressed=true]{background:var(--acc);color:var(--acc-ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.5rem}
+.mode{display:flex;gap:.5rem;margin:.75rem 0 1rem;flex-wrap:wrap}
+label{display:block;font-size:.92rem;color:var(--mute);margin:.6rem 0 .25rem}
+input,textarea{width:100%;padding:.6rem .8rem;border-radius:.6rem;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:.95rem ui-monospace,Menlo,Consolas,monospace}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+pre{margin:.5rem 0;padding:.8rem 1rem;border-radius:.6rem;background:var(--bg);border:1px solid var(--line);white-space:pre-wrap;word-break:break-word;font:.88rem ui-monospace,Menlo,Consolas,monospace}
+.res{margin-top:1rem;padding:.9rem 1rem;border-radius:.6rem;border-left:5px solid var(--ok);background:var(--bg)}
+.res.bad{border-left-color:var(--hi)}
+.res b{display:block}
+.res.bad b{color:var(--hi)}.res:not(.bad) b{color:var(--ok)}
+.why{display:grid;gap:1rem;grid-template-columns:1fr 1fr}
+.why p{margin:.2rem 0 0;color:var(--mute);font-size:.96rem}
+@media (max-width:620px){.why{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<p class="back"><a href="https://claude.ai/artifact/Ew82vcfacFS3rooHoVq5XF">Vissza Balangó Máté oldalára</a></p>
+<h1>Webbiztonsági labor</h1>
+<p class="lead">Három gyakori webes sérülékenység szándékosan hibás mintaalkalmazásban. Támadd meg a sérülékeny változatot, aztán kapcsold át a javítottra, és nézd meg, mi változik.</p>
+<p class="note">Minden szimuláció a böngésződben fut, nincs valódi szerver vagy adatbázis, ezért az egész veszélytelen.</p>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+<div id="panels"></div>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function esc(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var mode={sql:'vuln',xss:'vuln',idor:'vuln'};
+var TABS=[['sql','SQL-injekció'],['xss','XSS'],['idor','Hibás hozzáférés-szabályozás']];
+var panels={};
+
+function res(box,bad,title,text){box.textContent='';box.className='res'+(bad?' bad':'');box.appendChild(el('b','',title));box.appendChild(el('span','',text))}
+function field(parent,id,label,multi,val){parent.appendChild(Object.assign(el('label'),{htmlFor:id,textContent:label}));var i=el(multi?'textarea':'input');i.id=id;if(multi)i.rows=3;if(val)i.value=val;parent.appendChild(i);return i}
+function buttons(parent,list,fn,cls){var r=el('div','row');list.forEach(function(x){var b=el('button','',x.t);b.type='button';b.addEventListener('click',function(){fn(x)});r.appendChild(b)});parent.appendChild(r);return r}
+function modeSwitch(p,key,rerun){
+  var m=el('div','mode');m.setAttribute('role','group');m.setAttribute('aria-label','Változat');
+  [['vuln','Sérülékeny változat'],['safe','Javított változat']].forEach(function(x){
+    var b=el('button','',x[1]);b.type='button';b.setAttribute('aria-pressed',x[0]===mode[key]);
+    b.addEventListener('click',function(){mode[key]=x[0];Array.prototype.forEach.call(m.children,function(c,i){c.setAttribute('aria-pressed',i===(x[0]==='vuln'?0:1))});rerun()});m.appendChild(b)});
+  p.appendChild(m);
+}
+function why(p,bad,fix){var w=el('div','why');var a=el('div');a.appendChild(el('h3','','Mi a hiba?'));a.appendChild(el('p','',bad));var b=el('div');b.appendChild(el('h3','','Mi a javítás?'));b.appendChild(el('p','',fix));w.appendChild(a);w.appendChild(b);p.appendChild(w)}
+
+/* SQL */
+function buildSql(){
+  var p=el('div','panel');p.appendChild(el('h2','','Bejelentkezési űrlap'));
+  p.appendChild(el('p','note','Az adatbázisban két felhasználó van: admin és mate. A jelszavakat nem mondom meg, a cél a belépés nélkül bejutni.'));
+  modeSwitch(p,'sql',run);
+  var u=field(p,'u','Felhasználónév'),pw=field(p,'pw','Jelszó');
+  var r=el('div','row');var go=el('button','','Bejelentkezés');go.type='button';go.addEventListener('click',run);r.appendChild(go);p.appendChild(r);
+  p.appendChild(el('label','','Kipróbálható bemenetek'));
+  buttons(p,[{t:"admin' --",u:"admin' --",p:'bármi'},{t:"' OR '1'='1",u:"' OR '1'='1",p:'bármi'},{t:"mate / jelszo",u:'mate',p:'jelszo'}],function(x){u.value=x.u;pw.value=x.p;run()});
+  var q=el('pre'),o=el('div','res');o.hidden=true;p.appendChild(q);p.appendChild(o);
+  function run(){
+    var a=u.value,b=pw.value,safe=mode.sql==='safe',DB=[{n:'admin',p:'Titok123!'},{n:'mate',p:'jelszo'}],user=null,note='',err=false;
+    q.textContent=safe?'SELECT * FROM users WHERE name = ? AND pass = ?\nparaméterek: ['+JSON.stringify(a)+', '+JSON.stringify(b)+']':"SELECT * FROM users WHERE name = '"+a+"' AND pass = '"+b+"'";
+    o.hidden=false;
+    if(safe){user=DB.filter(function(x){return x.n===a&&x.p===b})[0]}
+    else{
+      var c=a.match(/^(.*?)'\s*(--|#)/);
+      if(c){user=DB.filter(function(x){return x.n===c[1]})[0];note='A megjegyzésjel után a jelszóellenőrzés kimaradt.'}
+      else if(/'\s*or\s*['"]?1['"]?\s*=\s*['"]?1/i.test(a+' '+b)){user=DB[0];note='A mindig igaz feltétel miatt az első sor, az admin jött vissza.'}
+      else if(/'/.test(a+b)){err=true}
+      else user=DB.filter(function(x){return x.n===a&&x.p===b})[0];
+    }
+    if(err)res(o,true,'SQL-szintaxishiba','Az idézőjel eltörte a lekérdezést. A hibaüzenet maga is információt szivárogtat a támadónak.');
+    else if(user&&note)res(o,true,'Bejelentkezve mint '+user.n+', jelszó nélkül',note);
+    else if(user)res(o,false,'Sikeres bejelentkezés: '+user.n,'Helyes név és jelszó.');
+    else res(o,false,'Sikertelen bejelentkezés',safe?'A bemenet adatként kezelődik, a trükk nem működik.':'Hibás név vagy jelszó.');
+  }
+  why(p,'A program a begépelt szöveget közvetlenül a lekérdezésbe fűzi, így a támadó SQL-kódot ír a mezőbe, és megváltoztatja a lekérdezés jelentését.','Paraméteres lekérdezés: a bemenet mindig adat marad, soha nem kód. Emellett a jelszavakat sózott hash formájában kell tárolni, és minimális jogú adatbázis-fiókot használni.');
+  return p;
+}
+
+/* XSS */
+function buildXss(){
+  var p=el('div','panel');p.appendChild(el('h2','','Vendégkönyv'));
+  p.appendChild(el('p','note','Bárki írhat megjegyzést, amit az oldal mindenkinek megjelenít. A látogatók böngészője számára az oldal megbízható.'));
+  modeSwitch(p,'xss',run);
+  var c=field(p,'c','Megjegyzés',true,'Szép oldal!');
+  var r=el('div','row');var go=el('button','','Elküldés');go.type='button';go.addEventListener('click',run);r.appendChild(go);p.appendChild(r);
+  p.appendChild(el('label','','Kipróbálható bemenetek'));
+  buttons(p,[{t:'Script-címke',v:'<script>alert(document.cookie)<\/script>'},{t:'Képes trükk',v:'<img src=x onerror=alert(1)>'},{t:'Ártalmatlan',v:'Szép oldal!'}],function(x){c.value=x.v;run()});
+  var q=el('pre'),o=el('div','res');o.hidden=true;p.appendChild(el('label','','A szerver által küldött HTML'));p.appendChild(q);p.appendChild(o);
+  function run(){
+    var v=c.value,safe=mode.xss==='safe';
+    q.textContent='<div class="komment">'+(safe?esc(v):v)+'</div>';o.hidden=false;
+    var danger=/<\s*script|on\w+\s*=|javascript:/i.test(v);
+    if(!safe&&danger)res(o,true,'A támadó kódja lefutott (szimuláció)','A böngésző kódként értelmezné a megjegyzést. Valódi oldalon ellophatná a látogatók munkamenet-sütijét, vagy a nevükben cselekedhetne.');
+    else if(safe&&danger)res(o,false,'Kiszűrve: a kód csak szövegként látszik','A < és > karakterek kódolva vannak, ezért a böngésző nem tekinti őket HTML-nek.');
+    else res(o,false,'Ártalmatlan megjegyzés','Nincs benne futtatható kód.');
+  }
+  why(p,'A program a felhasználótól kapott szöveget módosítás nélkül illeszti be az oldalba, ezért a támadó saját kódot juttathat más látogatók böngészőjébe.','Kimeneti kódolás minden beillesztett szövegnél, tartalombiztonsági irányelv (CSP) és HttpOnly süti, hogy a script ne érhesse el a munkamenetet.');
+  return p;
+}
+
+/* IDOR */
+function buildIdor(){
+  var INV={1001:{o:'Kata',a:'12 500 Ft',t:'Online tanfolyam'},1002:{o:'Kata',a:'8 900 Ft',t:'Tárhely előfizetés'},1003:{o:'Béla',a:'245 000 Ft',t:'Szerver bérlés (bizalmas)'},1004:{o:'Admin',a:'1 200 000 Ft',t:'Éves licenc (bizalmas)'}};
+  var p=el('div','panel');p.appendChild(el('h2','','Számlaportál'));
+  p.appendChild(el('p','note','Be vagy jelentkezve mint Kata. A saját számláid: 1001 és 1002. Megnézheted más felhasználó számláját is?'));
+  modeSwitch(p,'idor',run);
+  var n=field(p,'n','Számlaazonosító',false,'1001');
+  var r=el('div','row');var go=el('button','','Számla lekérése');go.type='button';go.addEventListener('click',run);r.appendChild(go);p.appendChild(r);
+  p.appendChild(el('label','','Kipróbálható bemenetek'));
+  buttons(p,[{t:'1001 (saját)',v:'1001'},{t:'1003 (másé)',v:'1003'},{t:'9999',v:'9999'}],function(x){n.value=x.v;run()});
+  var q=el('pre'),o=el('div','res');o.hidden=true;p.appendChild(q);p.appendChild(o);
+  function run(){
+    var id=n.value.trim(),inv=INV[id],safe=mode.idor==='safe';
+    q.textContent='GET /szamla/'+id+'\nmunkamenet: Kata';o.hidden=false;
+    if(!inv)res(o,false,'404 Nem található','Ilyen számla nincs.');
+    else if(safe&&inv.o!=='Kata')res(o,false,'403 Tiltott','A szerver ellenőrizte, hogy a számla a bejelentkezett felhasználóé-e, és megtagadta a hozzáférést.');
+    else if(inv.o!=='Kata')res(o,true,'Idegen számla kiszivárgott: '+inv.o+', '+inv.a,inv.t+'. A szerver csak azt nézte, hogy be vagy-e jelentkezve, azt nem, hogy a számla a tiéd-e.');
+    else res(o,false,'Saját számla: '+inv.a,inv.t+'.');
+  }
+  why(p,'A program a kérésben kapott azonosító alapján ad vissza adatot, de nem ellenőrzi, hogy a bejelentkezett felhasználó jogosult-e rá. Az azonosító átírásával bárki más adatait elérheted.','Minden kérésnél a szerver oldalán kell ellenőrizni a jogosultságot (a tulajdonos egyezik-e a munkamenettel). A kiszámítható azonosítók elrejtése nem védelem.');
+  return p;
+}
+
+var builders={sql:buildSql,xss:buildXss,idor:buildIdor};
+TABS.forEach(function(t,i){
+  var b=el('button','',t[1]);b.type='button';b.id='t-'+t[0];b.setAttribute('role','tab');b.setAttribute('aria-selected',i===0);
+  b.addEventListener('click',function(){TABS.forEach(function(x){$('t-'+x[0]).setAttribute('aria-selected',x[0]===t[0]);panels[x[0]].hidden=x[0]!==t[0]})});
+  $('tabs').appendChild(b);
+  var p=builders[t[0]]();p.hidden=i!==0;panels[t[0]]=p;$('panels').appendChild(p);
+});
+})();
+</script>
+</body>
+</html>

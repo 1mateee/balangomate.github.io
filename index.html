@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Balangó Máté – junior fejlesztő</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <h1>Balangó Máté</h1>
+        <p class="role">Junior szoftverfejlesztő és IT gyakornok</p>
+        <p class="lead">Programtervező informatikus hallgatóként C#/.NET és React alapú alkalmazásokat építek, mellette kiberbiztonsági képzéseket végeztem. Junior fejlesztői vagy IT pozíciót keresek, ahol sokat tanulhatok és valódi projekteken dolgozhatok.</p>
+        <div class="actions">
+          <a class="btn p" href="mailto:matebalango@gmail.com">E-mail küldése</a>
+          <a class="btn s" href="https://www.linkedin.com/in/balangó-máté-ab955a269/" target="_blank" rel="noopener">LinkedIn-profil</a>
+        </div>
+      </div>
+      <dl class="facts">
+        <div><dt>Tanulmány</dt><dd>Programtervező informatikus BSc, Pannon Egyetem (2023 óta)</dd></div>
+        <div><dt>Gyakorlat</dt><dd>IT gyakornok, Klippe Learning (8 hónap)</dd></div>
+        <div><dt>Fő eszközök</dt><dd>C#, .NET 9, React, SQL, Git</dd></div>
+        <div><dt>Nyelv</dt><dd>magyar (anyanyelv), angol B2</dd></div>
+        <div><dt>Helyszín</dt><dd>Budapest</dd></div>
+        <div><dt>Jogosítvány</dt><dd>B kategória</dd></div>
+      </dl>
+    </header>
+
+    <section id="projektek">
+      <h2>Projektek</h2>
+      <div class="projects">
+        <article class="card">
+          <h3>Útvonaltervező alkalmazás csoportos utazásokhoz</h3>
+          <p>Szakdolgozatom: Android mobilalkalmazás, amely figyelembe veszi a látnivalók nyitvatartását, a látogatási időt és a tervezett pihenő- és étkezési szüneteket. Csoportos utazásnál a résztvevők szavazással rangsorolják a helyszíneket, az alkalmazás pedig kompromisszumos közös útvonalat javasol, és időablakos optimalizálóval ütemezi. A bejelentkezést Firebase, a valós idejű szinkront Firestore adja. Működő prototípus.</p>
+          <ul class="tags"><li>Java</li><li>Kotlin</li><li>Android</li><li>Firebase</li><li>Cloud Firestore</li><li>Geoapify API</li><li>Mapbox</li><li>Szakdolgozat</li></ul>
+        </article>
+        <article class="card">
+          <h3>Stock Exchange Dashboard</h3>
+          <p>Valós idejű tőzsdei árfolyam-monitorozó interaktív grafikonokkal és automatikus riasztásokkal. Én készítettem a teljes riasztási rendszert, integráltam több külső pénzügyi API-t, és gondoskodtam a történeti adatok áttekinthető megjelenítéséről.</p>
+          <ul class="tags"><li>.NET 9</li><li>React 18</li><li>SignalR</li><li>Minősítés: jeles</li></ul>
+        </article>
+        <article class="card">
+          <h3>Kriptovaluta kereskedési szimulátor</h3>
+          <p>Oktatási célú backend virtuális pénztárcával, vásárlással és eladással, portfóliókezeléssel. Háttérszolgáltatás szimulálja az árfolyamokat, a program valós időben számolja a profitot és veszteséget, és naplózza a tranzakciókat.</p>
+          <ul class="tags"><li>C#</li><li>.NET 9</li><li>MSSQL</li><li>Entity Framework Core</li><li>Swagger</li><li>Minősítés: jeles</li></ul>
+        </article>
+        <article class="card">
+          <h3>Future-Tech: egy kormányablak teljes hálózata</h3>
+          <p>Technikumi záróprojekt három fős csapatban. Egy kétszintes kormányablak számítástechnikai hátterét terveztük meg: VLAN-okra bontott belső hálózatot IPv4-címzéssel, OSPF forgalomirányítást, NAT és PAT címfordítást, VPN-t a távoli eléréshez és tűzfalat. Linux szerver szolgáltatta a webszervert és az FTP-t, Windows szerver a tartományvezérlést, DHCP-t, nyomtatószervert és az esti biztonsági mentést. Az egészet Cisco Packet Tracerben teszteltük. Én a hálózati topológiát és az eszközök kiosztását készítettem a csapattársammal közösen.</p>
+          <ul class="tags"><li>Cisco Packet Tracer</li><li>VLAN</li><li>OSPF</li><li>NAT/PAT</li><li>VPN</li><li>Active Directory</li><li>Linux</li><li>Minősítés: 4 (jó)</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="hobbi">
+      <h2>Otthoni és hobbiprojektek</h2>
+      <div class="projects">
+        <article class="card">
+          <h3>Fájlvizsgáló (kiberbiztonsági demó)</h3>
+          <p>Interaktív eszköz, amely egy fájl tartalmából megállapítja a típusát, összeveti a kiterjesztéssel, felismeri a kettős kiterjesztést és a makrós fájlokat, entrópiát számol, hasht készít, és kockázati besorolást ad. A böngészőben fut, a fájl nem kerül fel sehova. <a href="Fájlvizsgáló – Balangó Máté.html" target="_blank" rel="noopener">Kipróbálom</a></p>
+          <ul class="tags"><li>JavaScript</li><li>SHA-256</li><li>Fájlbiztonság</li></ul>
+        </article>
+        <article class="card">
+          <h3>Webbiztonsági labor</h3>
+          <p>Interaktív oktató labor három gyakori webes sebezhetőségről: SQL-injekció, XSS és hibás hozzáférés-szabályozás. Mindegyiknél átkapcsolható a sérülékeny és a javított változat, így jól látszik, mi a hiba, és mi a védelem. Szimuláció, a böngészőben fut. <a href="Webbiztonsági labor – Balangó Máté.html" target="_blank" rel="noopener">Kipróbálom</a></p>
+          <ul class="tags"><li>OWASP</li><li>SQL-injekció</li><li>XSS</li><li>Hozzáférés-szabályozás</li></ul>
+        </article>
+        <article class="card">
+          <h3>Útvonalkereső vizualizáció</h3>
+          <p>Interaktív alkalmazás, amelyben falakat és mocárt rajzolhatsz egy rácsra, majd láthatod, hogyan keresi meg az útvonalat a szélességi keresés, a Dijkstra és az A* algoritmus. A bejárt mezők száma és az út költsége alapján összehasonlíthatók. <a href="Útvonalkereső vizualizáció – Balangó Máté.html" target="_blank" rel="noopener">Kipróbálom</a></p>
+          <ul class="tags"><li>JavaScript</li><li>BFS</li><li>Dijkstra</li><li>A*</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="utam">
+      <h2>Tapasztalat és tanulmányok</h2>
+      <ol class="tl">
+        <li>
+          <span class="when">2025. szeptember – 2026. április</span>
+          <h3>IT gyakornok, Klippe Learning</h3>
+          <p>Digitális tartalmakat fejlesztettem, támogattam webes és e-learning rendszerek fejlesztését, teszteltem informatikai megoldásokat, oktatási segédanyagokat és felhasználói útmutatókat írtam, valamint elemzési és dokumentációs feladatokat végeztem.</p>
+        </li>
+        <li>
+          <span class="when">2023 – jelenleg</span>
+          <h3>Programtervező informatikus BSc</h3>
+          <p>Pannon Egyetem, Műszaki Informatika Kar, Veszprém.</p>
+        </li>
+        <li>
+          <span class="when">2021 – 2023</span>
+          <h3>Informatikai rendszer- és alkalmazásüzemeltető technikus</h3>
+          <p>Veszprémi SZC Öveges József Technikum és Kollégium, Balatonfűzfő. Adatbázis- és hálózattervezés, szoftverfejlesztés.</p>
+        </li>
+        <li>
+          <span class="when">2017 – 2021</span>
+          <h3>Gimnáziumi érettségi</h3>
+          <p>Noszlopy Gáspár Gimnázium és Kollégium, Veszprém.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="keszsegek">
+      <div class="two">
+        <div>
+          <h2>Készségek</h2>
+          <ul class="tags">
+            <li>C#</li><li>Java</li><li>Kotlin</li><li>C</li><li>SQL</li><li>HTML</li><li>CSS</li><li>JavaScript</li><li>React</li><li>.NET</li><li>Git</li><li>Visual Studio</li><li>VS Code</li><li>Hálózattervezés</li><li>VLAN</li><li>Cisco Packet Tracer</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Kiberbiztonság</h2>
+          <ul class="certs">
+            <li><b>OCFA</b> Cybersecurity Fundamentals</li>
+            <li><b>OFSA</b> File Security</li>
+            <li><b>OLSA</b> Legacy Systems Security</li>
+            <li><b>OESA</b> Email Security</li>
+            <li><b>OSSA</b> Secure Storage</li>
+            <li><b>ONSA</b> Network Security</li>
+            <li><b>OWPA</b> Web Traffic Protection</li>
+            <li><b>ODSA</b> Data Transfer Security</li>
+            <li><b>OECA</b> Endpoint Compliance</li>
+            <li><b>ICIP</b> Critical Infrastructure Protection</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="kapcsolat" class="contact">
+      <h2>Beszéljünk</h2>
+      <div class="actions">
+        <a class="btn p" href="mailto:matebalango@gmail.com">matebalango@gmail.com</a>
+        <a class="btn s" href="tel:+36304675979">+36 30 467 5979</a>
+        <a class="btn s" href="https://www.linkedin.com/in/balangó-máté-ab955a269/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap">© Balangó Máté</footer>
+</body>
+</html>

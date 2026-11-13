@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fájlvizsgáló – Balangó Máté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1F3F8;--surface:#FFFFFF;--ink:#0F1728;--mute:#566074;--line:#D8DDE8;--acc:#2B47F5;--acc-ink:#FFFFFF;--soft:#E4E9FB;--hi:#B3261E;--mid:#9A5B00;--lo:#2B47F5;--ok:#1B7A3E;
+--head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"Public Sans","Segoe UI",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--mid:#FFC66B;--lo:#8EA0FF;--ok:#7BDC9C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1322;--surface:#161D31;--ink:#EBEEF7;--mute:#9AA4BA;--line:#27304A;--acc:#8EA0FF;--acc-ink:#0E1322;--soft:#1F2847;--hi:#FF8A80;--mid:#FFC66B;--lo:#8EA0FF;--ok:#7BDC9C;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body)}
+a{color:var(--acc)}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.25rem 3rem}
+h1,h2,h3{font-family:var(--head);line-height:1.1;margin:0}
+h1{font-weight:800;font-size:clamp(2.4rem,7vw,4rem);letter-spacing:-.03em;margin:1rem 0}
+h2{font-weight:800;font-size:1.6rem;letter-spacing:-.02em;margin-bottom:1rem}
+.lead{color:var(--mute);max-width:36rem}
+.back{padding-top:1.5rem;font-size:.95rem}
+.drop{display:block;border:2px dashed var(--acc);border-radius:1rem;padding:2.5rem 1.25rem;text-align:center;background:var(--surface);cursor:pointer;margin:1.5rem 0}
+.drop:hover,.drop.over,.drop:focus-visible{background:var(--soft);outline:none;border-style:solid}
+.drop strong{display:block;font:600 1.3rem var(--head)}
+.drop span{color:var(--mute)}
+section{padding:1.75rem 0;border-top:1px solid var(--line)}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem}
+button{font:600 .95rem var(--body);padding:.6rem 1rem;border-radius:.6rem;border:2px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer}
+button:hover{background:var(--soft)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.verdict{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;border-radius:1rem;padding:1.1rem 1.3rem;background:var(--surface);border:2px solid var(--line);margin-bottom:1.25rem}
+.verdict strong{font:800 1.6rem var(--head)}
+.v-high{border-color:var(--hi)}.v-high strong{color:var(--hi)}
+.v-mid{border-color:var(--mid)}.v-mid strong{color:var(--mid)}
+.v-low{border-color:var(--ok)}.v-low strong{color:var(--ok)}
+.bar{flex-basis:100%;height:.5rem;border-radius:1rem;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:currentColor;transition:width .5s}
+.facts{display:grid;grid-template-columns:7rem 1fr;gap:.5rem 1rem;margin:0 0 1.5rem}
+.facts dt{color:var(--mute);font-size:.92rem}
+.facts dd{margin:0;word-break:break-all}
+code{font:.88rem ui-monospace,Menlo,Consolas,monospace}
+.find{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.find li{background:var(--surface);border:1px solid var(--line);border-left-width:5px;border-radius:.6rem;padding:.8rem 1rem}
+.find li b{display:block}
+.find .s{font-size:.85rem;font-weight:600}
+.f-high{border-left-color:var(--hi)}.f-high .s{color:var(--hi)}
+.f-mid{border-left-color:var(--mid)}.f-mid .s{color:var(--mid)}
+.f-low,.f-info{border-left-color:var(--lo)}.f-low .s,.f-info .s{color:var(--lo)}
+.find p{margin:.2rem 0 0;color:var(--mute);font-size:.95rem}
+input[type=text]{width:100%;padding:.65rem .8rem;border-radius:.6rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:.9rem ui-monospace,Menlo,Consolas,monospace}
+.rules{padding-left:1.2rem;margin:0}
+.rules li{margin-bottom:.4rem}
+.note{color:var(--mute);font-size:.95rem}
+@media (max-width:560px){.facts{grid-template-columns:1fr;gap:.1rem}.facts dd{margin-bottom:.6rem}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<p class="back"><a href="https://claude.ai/artifact/Ew82vcfacFS3rooHoVq5XF">Vissza Balangó Máté oldalára</a></p>
+<h1>Fájlvizsgáló</h1>
+<p class="lead">Húzz ide egy fájlt, és megmondom, mennyire gyanús. A vizsgálat a böngésződben fut, a fájl nem kerül fel sehova.</p>
+
+<label class="drop" id="drop" tabindex="0">
+  <input type="file" id="f" hidden>
+  <strong>Húzd ide a fájlt, vagy kattints a kiválasztáshoz</strong>
+  <span>legfeljebb 50 MB</span>
+</label>
+
+<section>
+  <h2>Nincs kéznél fájl? Próbálj ki egy mintát</h2>
+  <p class="note">A minták a böngészőben jönnek létre, ártalmatlanok, csak a fejlécük vagy a nevük utánoz veszélyes fájlt.</p>
+  <div class="actions" id="samples"></div>
+</section>
+
+<section id="out" hidden aria-live="polite"></section>
+
+<section>
+  <h2>Mit néz meg a program?</h2>
+  <ol class="rules">
+    <li>A fájl tényleges típusát a tartalmának első bájtjaiból állapítja meg, nem a kiterjesztésből.</li>
+    <li>Összeveti a kiterjesztést a tartalommal: egy .jpg, ami valójában futtatható program, súlyos jel.</li>
+    <li>Felismeri a kettős kiterjesztést (szamla.pdf.exe) és a jobbról balra író vezérlőkaraktert a névben.</li>
+    <li>Jelzi a futtatható, szkript és makrós kiterjesztéseket, valamint az archívumokat, amelyek tartalmát külön kell vizsgálni.</li>
+    <li>Kiszámolja az entrópiát: a nagyon magas érték csomagolt vagy titkosított tartalomra utalhat.</li>
+    <li>Keres néhány jellegzetes gyanús szövegrészletet, például PowerShell-parancsot.</li>
+    <li>SHA-256 és SHA-1 hasht készít, amit egy ismert hashhez is hasonlíthatsz.</li>
+  </ol>
+  <p class="note">Ez oktatási célú, szabályalapú vizsgálat. Hamis riasztást is adhat, és nem helyettesíti a víruskeresőt.</p>
+</section>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var TYPES=[
+{id:'pe',n:'Windows futtatható (PE)',m:[0x4D,0x5A],ok:['exe','dll','scr','sys','com','ocx']},
+{id:'elf',n:'Linux futtatható (ELF)',m:[0x7F,0x45,0x4C,0x46],ok:['elf','so','bin','']},
+{id:'pdf',n:'PDF dokumentum',m:[0x25,0x50,0x44,0x46],ok:['pdf']},
+{id:'png',n:'PNG kép',m:[0x89,0x50,0x4E,0x47],ok:['png']},
+{id:'jpg',n:'JPEG kép',m:[0xFF,0xD8,0xFF],ok:['jpg','jpeg']},
+{id:'gif',n:'GIF kép',m:[0x47,0x49,0x46,0x38],ok:['gif']},
+{id:'zip',n:'ZIP-alapú tároló (ZIP, Office, JAR)',m:[0x50,0x4B,0x03,0x04],ok:['zip','docx','xlsx','pptx','docm','xlsm','pptm','jar','apk','odt','ods','epub']},
+{id:'rar',n:'RAR archívum',m:[0x52,0x61,0x72,0x21],ok:['rar']},
+{id:'7z',n:'7-Zip archívum',m:[0x37,0x7A,0xBC,0xAF,0x27,0x1C],ok:['7z']},
+{id:'gz',n:'GZIP archívum',m:[0x1F,0x8B],ok:['gz','tgz']},
+{id:'ole',n:'Régi Office dokumentum (OLE)',m:[0xD0,0xCF,0x11,0xE0],ok:['doc','xls','ppt','msi']}
+];
+var EXPECT={pdf:'pdf',png:'png',jpg:'jpg',jpeg:'jpg',gif:'gif',zip:'zip',docx:'zip',xlsx:'zip',pptx:'zip',exe:'pe',dll:'pe'};
+var RISKY=['exe','scr','bat','cmd','com','pif','msi','ps1','vbs','vbe','js','jse','wsf','hta','lnk','jar','reg','iso','apk'];
+var MACRO=['docm','xlsm','pptm','dotm','xlam'];
+var PACKED=['zip','rar','7z','gz','jpg','png','gif','pdf'];
+var PATTERNS=['powershell','cmd.exe','createremotethread','virtualalloc','frombase64string','wscript.shell','autoopen','vbaproject','<script'];
+var SEV={high:'Magas',mid:'Közepes',low:'Alacsony',info:'Információ'};
+var PTS={high:40,mid:20,low:8,info:0};
+
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function fmt(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB'}
+function ext(n){var m=n.toLowerCase().match(/\.([a-z0-9]+)$/);return m?m[1]:''}
+function hash(a,buf){return crypto.subtle.digest(a,buf).then(function(d){return Array.from(new Uint8Array(d)).map(function(b){return b.toString(16).padStart(2,'0')}).join('')})}
+function entropy(u){var c=new Array(256).fill(0),i,e=0;for(i=0;i<u.length;i++)c[u[i]]++;for(i=0;i<256;i++)if(c[i]){var p=c[i]/u.length;e-=p*Math.log2(p)}return e}
+
+function analyse(name,u8){
+  var F=[],e=ext(name),t=null,i;
+  for(i=0;i<TYPES.length;i++){if(TYPES[i].m.every(function(b,k){return u8[k]===b})){t=TYPES[i];break}}
+  var add=function(s,ti,d){F.push({s:s,t:ti,d:d})};
+  if(u8.length===0)add('low','Üres fájl','A fájlnak nincs tartalma, így nincs mit vizsgálni.');
+  if(/\u202e/.test(name))add('high','Jobbról balra író vezérlőkarakter a névben','Ezzel a trükkel a fájl kiterjesztése fordítva, ártalmatlannak tűnően jelenik meg.');
+  if(/\.(pdf|docx?|xlsx?|pptx?|jpe?g|png|txt|zip)\.(exe|scr|bat|cmd|js|vbs|ps1|com|lnk|msi|jar)$/i.test(name))add('high','Kettős kiterjesztés','A név dokumentumnak vagy képnek álcázza a fájlt, de a valódi kiterjesztése futtatható.');
+  var exec=t&&(t.id==='pe'||t.id==='elf');
+  if(exec&&t.ok.indexOf(e)<0)add('high','Álcázott futtatható fájl','A tartalma '+t.n+', de a kiterjesztése ('+(e?'.'+e:'nincs')+') mást sugall.');
+  else if(EXPECT[e]&&(!t||t.id!==EXPECT[e]))add('mid','A tartalom nem egyezik a kiterjesztéssel','A .'+e+' kiterjesztés mást ígér, mint amit a fájl fejléce mutat'+(t?' ('+t.n+')':' (ismeretlen típus)')+'.');
+  if(RISKY.indexOf(e)>=0)add('mid','Futtatható vagy szkript kiterjesztés','A .'+e+' fájlok programot indíthatnak. Csak megbízható forrásból nyisd meg őket.');
+  if(MACRO.indexOf(e)>=0||(t&&t.id==='ole'&&/^(doc|xls|ppt)$/.test(e)))add('mid','Makrót tartalmazhat','Az ilyen Office-fájlok makrókkal kódot futtathatnak. A makrók engedélyezése a leggyakoribb támadási út.');
+  if(t&&/^(zip|rar|7z|gz)$/.test(t.id)&&MACRO.indexOf(e)<0&&!/^(docx|xlsx|pptx)$/.test(e))add('low','Archívum','A becsomagolt tartalmat külön ki kell csomagolni és megvizsgálni.');
+  var ent=entropy(u8.subarray(0,1048576));
+  if(u8.length>256&&ent>7.5&&(!t||PACKED.indexOf(t.id)<0))add('mid','Nagyon magas entrópia','Az entrópia '+ent.toFixed(2)+' a 8-ból. Ez csomagolt, titkosított vagy rejtett tartalomra utalhat.');
+  var s=new TextDecoder('latin1').decode(u8.subarray(0,2000000)).toLowerCase();
+  var hits=PATTERNS.filter(function(p){return s.indexOf(p)>=0});
+  if(hits.length)add(hits.length>1?'mid':'low','Gyanús szövegrészletek','Megtalált kifejezések: '+hits.join(', ')+'. Önmagukban nem bizonyítékok, de együtt figyelmeztető jelek.');
+  F.sort(function(a,b){return PTS[b.s]-PTS[a.s]});
+  var score=F.reduce(function(a,f){return a+PTS[f.s]},0);
+  return {F:F,score:score,type:t,ent:ent};
+}
+
+function show(file,u8,sha256,sha1,r){
+  var out=$('out');out.hidden=false;out.textContent='';
+  out.appendChild(el('h2','','Eredmény'));
+  var lvl=r.score>=40?'high':r.score>=16?'mid':'low';
+  var v=el('div','verdict v-'+lvl);
+  v.appendChild(el('strong','',lvl==='high'?'Magas kockázat':lvl==='mid'?'Közepes kockázat':'Alacsony kockázat'));
+  v.appendChild(el('span','','Pontszám: '+Math.min(r.score,100)+' a 100-ból'));
+  var bar=el('div','bar');var bi=el('i');bi.style.width=Math.min(r.score,100)+'%';bar.appendChild(bi);v.appendChild(bar);
+  out.appendChild(v);
+  var d=el('dl','facts');
+  [['Név',file.name],['Méret',fmt(u8.length)],['Felismert típus',r.type?r.type.n:'ismeretlen vagy szöveges'],['Entrópia',r.ent.toFixed(2)+' / 8'],['SHA-256',sha256],['SHA-1',sha1]].forEach(function(x){
+    d.appendChild(el('dt','',x[0]));var dd=el('dd');dd.appendChild(el(x[0].indexOf('SHA')===0?'code':'span','',x[1]));d.appendChild(dd)});
+  out.appendChild(d);
+  out.appendChild(el('h3','','Találatok'));
+  out.lastChild.style.marginBottom='.75rem';
+  var ul=el('ul','find');
+  if(!r.F.length){var li=el('li','f-info');li.appendChild(el('b','','Nem találtam gyanús jelet'));li.appendChild(el('p','','Ez nem jelenti azt, hogy a fájl biztonságos, csak azt, hogy az egyszerű szabályaim nem szóltak.'));ul.appendChild(li)}
+  r.F.forEach(function(f){var li=el('li','f-'+f.s);li.appendChild(el('span','s',SEV[f.s]));li.appendChild(el('b','',f.t));li.appendChild(el('p','',f.d));ul.appendChild(li)});
+  out.appendChild(ul);
+  out.appendChild(el('h3','','Összevetés ismert hashsel'));
+  out.lastChild.style.margin='1.5rem 0 .6rem';
+  var inp=el('input');inp.type='text';inp.placeholder='Illeszd be a várt SHA-256 vagy SHA-1 értéket';inp.setAttribute('aria-label','Ismert hash');
+  var msg=el('p','note','');
+  inp.addEventListener('input',function(){var q=inp.value.trim().toLowerCase();msg.textContent=!q?'':(q===sha256||q===sha1)?'Egyezik: a fájl azonos a várttal.':'Nem egyezik: a fájl eltér a várttól, vagy más hash-típust adtál meg.'});
+  out.appendChild(inp);out.appendChild(msg);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function run(file){
+  if(file.size>52428800){var o=$('out');o.hidden=false;o.textContent='A fájl túl nagy, legfeljebb 50 MB lehet.';return}
+  file.arrayBuffer().then(function(buf){
+    var u8=new Uint8Array(buf);
+    return Promise.all([hash('SHA-256',buf),hash('SHA-1',buf)]).then(function(h){show(file,u8,h[0],h[1],analyse(file.name,u8))});
+  }).catch(function(){var o=$('out');o.hidden=false;o.textContent='A fájlt nem sikerült beolvasni.'});
+}
+
+var enc=new TextEncoder();
+function cat(h,s){return Uint8Array.from(h.concat(Array.from(enc.encode(s))))}
+var SAMPLES=[
+ ['szamla.pdf.exe',function(){return cat([0x4D,0x5A,0x90,0,3,0,0,0],'This program cannot be run in DOS mode.')}],
+ ['nyaralas.jpg',function(){return cat([0x50,0x4B,3,4],'powershell -enc AAAA && cmd.exe /c start')}],
+ ['riport.docm',function(){return cat([0x50,0x4B,3,4],'word/vbaProject.bin AutoOpen')}],
+ ['titkos.bin',function(){var a=new Uint8Array(20000);crypto.getRandomValues(a);return a}],
+ ['jegyzet.txt',function(){return enc.encode('Ez egy ártalmatlan szöveges jegyzet.')}]
+];
+SAMPLES.forEach(function(s){var b=el('button','',s[0]);b.type='button';b.addEventListener('click',function(){run(new File([s[1]()],s[0]))});$('samples').appendChild(b)});
+
+var drop=$('drop'),f=$('f');
+f.addEventListener('change',function(){if(f.files[0])run(f.files[0]);f.value=''});
+drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();f.click()}});
+['dragenter','dragover'].forEach(function(n){drop.addEventListener(n,function(e){e.preventDefault();drop.classList.add('over')})});
+['dragleave','drop'].forEach(function(n){drop.addEventListener(n,function(e){e.preventDefault();drop.classList.remove('over')})});
+drop.addEventListener('drop',function(e){if(e.dataTransfer.files[0])run(e.dataTransfer.files[0])});
+})();
+</script>
+</body>
+</html>
